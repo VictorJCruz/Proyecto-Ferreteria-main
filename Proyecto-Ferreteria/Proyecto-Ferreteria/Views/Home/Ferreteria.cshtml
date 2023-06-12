@@ -1,0 +1,126 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_IndexTest2.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Ferreteria</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/PluginsCSS")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+
+    <!-- Modal -->
+    
+    <header class="bg-secondary py-3">
+
+        <div class="row mt-5">
+            <div class="bg-secondary py-3">
+                <div class="container my-3">
+                    <div class="text-center text-white">
+                        <h1 class="display-4 fw-bolder"> La mejor Ferretería del país </h1>
+                        <p class="lead fw-normal text-white-50 mb-0">Aquí encontraras todo lo que necesites</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-2">
+                <div class="container px-2 px-lg-2 mt-5">
+                    <div id="catalogo-productos" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <section class="py-2">
+        <div class="container px-2 px-lg-2 mt-5">
+            <div id="catalogo-productos" class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+            </div>
+        </div>
+    </section>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Content/PluginsJS")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
+    <script>
+        $(".btn-categoria").click(function () {
+            $('#exampleModal').modal('show');
+        });
+
+        $(document).ready(function () {
+
+            jQuery.ajax({
+                url: '@Url.Action("ListarProducto", "Home")',
+                type: "GET",
+                data: null,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    $("#catalogo-productos").LoadingOverlay("hide");
+                    if (data.data != null) {
+
+                        $.each(data.data, function (i, item) {
+                            //catalogo-productos
+                            $("<div>").addClass("col mb-5").append(
+                                $("<div>").addClass("card h-100").append(
+                                    $("<img>").addClass("card-img-top").attr({ "src": "data:image/" + item.extension + ";base64," + item.base64 }),
+                                    //Product details
+                                    $("<div>").addClass("card-body p-4").append(
+                                        $("<div>").addClass("text-center").append(
+                                            $("<h5>").addClass("fw-bolder").text(item.Nombre),
+                                            "S/. " + item.Precio
+                                        )
+                                    ),
+                                    //Product actions
+                                    $("<div>").addClass("card-footer p-4 pt-0 border-top-0 bg-transparent").append(
+                                        $("<div>").addClass("d-grid d-md-grid gap-2 d-md-block align-items-center text-center").append(
+                                            $("<button>").addClass("btn btn-outline-dark mt-auto").text("Ver Detalle"),
+                                            $("<button>").addClass("btn btn-outline-dark mt-auto").text("Agregar al carrito")
+
+                                        )
+                                    )
+                                )
+
+                            ).appendTo("#catalogo-productos")
+
+
+                        });
+
+                        //Activo: true
+                        //Descripcion: "Tipo: PS4\nProcesador: AMD\nEntradas USB: 3\nEntradas HDMI: 1\nConectividad: WiFi"
+                        //IdProducto: 1
+                        //Nombre: "Consola de PS4 Pro 1TB Negro"
+                        //Precio: 2000
+                        //RutaImagen: "~/Imagenes/Productos/1.jpg"
+                        //Stock: 50
+                        //base64: "/9j/4AAQSkZJRgABAQEASABIAAD/2wCEAAYEBQYFBAYGBQYHB
+                        //extension: "jpg"
+                    }
+                },
+                error: function (error) {
+                    console.log(error)
+                },
+                beforeSend: function () {
+                    $("#catalogo-productos").LoadingOverlay("show");
+                },
+            });
+
+
+        })
+
+
+    </script>
+</body>
+</html>
+
